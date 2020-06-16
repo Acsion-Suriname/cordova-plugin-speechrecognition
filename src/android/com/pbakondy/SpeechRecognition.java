@@ -281,6 +281,8 @@ public class SpeechRecognition extends CordovaPlugin {
 
     @Override
     public void onEndOfSpeech() {
+      Log.d(LOG_TAG, "END OF SPEECH.");
+      callbackContext.error("SPEECH_TIMEOUT");
     }
 
     @Override
