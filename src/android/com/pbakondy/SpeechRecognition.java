@@ -52,6 +52,7 @@ public class SpeechRecognition extends CordovaPlugin {
   private static final String RECORD_AUDIO_PERMISSION = Manifest.permission.RECORD_AUDIO;
 
   private CallbackContext callbackContext;
+  private boolean showEndOfSpeech;
   private LanguageDetailsChecker languageDetailsChecker;
   private Activity activity;
   private Context context;
@@ -165,6 +166,7 @@ public class SpeechRecognition extends CordovaPlugin {
   private void startListening(String language, int matches, String prompt, final Boolean showPartial, Boolean showPopup, int completeSilenceLength) {
     Log.d(LOG_TAG, "startListening() language: " + language + ", matches: " + matches + ", prompt: " + prompt + ", showPartial: " + showPartial + ", showPopup: " + showPopup + ", completeSilenceLength: " + completeSilenceLength);
 
+    this.showEndOfSpeech = showPartial;
     final Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
     intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
             RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -281,8 +283,10 @@ public class SpeechRecognition extends CordovaPlugin {
 
     @Override
     public void onEndOfSpeech() {
-      Log.d(LOG_TAG, "END OF SPEECH.");
-      callbackContext.error("SPEECH_TIMEOUT");
+      if(Parent.this.showEndOfSpeech) {
+        Log.d(LOG_TAG, "END OF SPEECH.");
+        callbackContext.error("SPEECH_TIMEOUT");
+      }
     }
 
     @Override
